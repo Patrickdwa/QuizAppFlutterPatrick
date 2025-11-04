@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quiz_app_patrick/data/questions.dart';
 import 'package:quiz_app_patrick/models/quiz_model.dart';
 import 'package:quiz_app_patrick/routes.dart';
-import 'package:quiz_app_patrick/screens/result_screen.dart'; // Import ResultScreenArgs
-
-// Widget dan file lain yang diperlukan (dibuat sebagai placeholder)
-import 'package:quiz_app_patrick/widgets/question_card.dart';
+import 'package:quiz_app_patrick/screens/result_screen.dart';
 import 'package:quiz_app_patrick/widgets/option_tile.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -18,37 +15,42 @@ class QuizScreen extends StatefulWidget {
 class _QuizScreenState extends State<QuizScreen> {
   late String userName;
   int _currentQuestionIndex = 0;
-  int? _selectedOptionIndex; // Indeks jawaban yang dipilih user
   final Map<int, int> _userAnswers = {}; // <indexSoal, indexJawabanUser>
 
-  // Ambil nama dari argumen navigasi
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    userName = ModalRoute.of(context)!.settings.arguments as String;
+    userName = ModalRoute
+        .of(context)!
+        .settings
+        .arguments as String;
   }
 
   void _selectOption(int index) {
     setState(() {
-      _selectedOptionIndex = index;
+      // Simpan jawaban untuk soal saat ini
+      _userAnswers[_currentQuestionIndex] = index;
     });
   }
 
   void _nextQuestion() {
-    // Simpan jawaban user
-    if (_selectedOptionIndex != null) {
-      _userAnswers[_currentQuestionIndex] = _selectedOptionIndex!;
-    }
-
     // Pindah ke pertanyaan berikutnya
     if (_currentQuestionIndex < dummyQuestions.length - 1) {
       setState(() {
         _currentQuestionIndex++;
-        _selectedOptionIndex = null; // Reset pilihan
       });
     } else {
       // Kuis selesai, hitung skor dan navigasi ke hasil
       _submitQuiz();
+    }
+  }
+
+  // Fungsi baru untuk 'Previous Question'
+  void _prevQuestion() {
+    if (_currentQuestionIndex > 0) {
+      setState(() {
+        _currentQuestionIndex--;
+      });
     }
   }
 
@@ -60,7 +62,6 @@ class _QuizScreenState extends State<QuizScreen> {
       }
     });
 
-    // Navigasi ke Halaman Hasil dan kirim data
     Navigator.pushReplacementNamed(
       context,
       AppRoutes.result,
@@ -77,36 +78,113 @@ class _QuizScreenState extends State<QuizScreen> {
     Question currentQuestion = dummyQuestions[_currentQuestionIndex];
     bool isLastQuestion = _currentQuestionIndex == dummyQuestions.length - 1;
 
+    int? selectedOptionIndex = _userAnswers[_currentQuestionIndex];
+    bool isOptionSelected = selectedOptionIndex != null;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Soal ${_currentQuestionIndex + 1} / ${dummyQuestions.length}'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 1. Kartu Pertanyaan (Widget Kustom)
-            QuestionCard(questionText: currentQuestion.text),
-            const SizedBox(height: 20),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. BARIS INDIKATOR PROGRESS & TOMBOL NAVIGASI (PERUBAHAN DI SINI)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Indikator Progress
+                  Text(
+                    'Question: ${_currentQuestionIndex + 1}/${dummyQuestions
+                        .length}',
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w600, // SemiBold
+                    ),
+                  ),
 
-            // 2. Daftar Pilihan (Widget Kustom)
-            ...List.generate(currentQuestion.options.length, (index) {
-              return OptionTile(
-                optionText: currentQuestion.options[index],
-                isSelected: _selectedOptionIndex == index,
-                onTap: () => _selectOption(index),
-              );
-            }),
+                  // Grup Tombol Previous & Next
+                  Row(
+                    children: [
+                      // Tombol Previous
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new, size: 18),
+                        // Nonaktifkan jika ini soal pertama
+                        onPressed: _currentQuestionIndex > 0
+                            ? _prevQuestion
+                            : null,
+                      ),
+                      const SizedBox(width: 8),
+                      // Tombol Next
+                      IconButton(
+                        icon: const Icon(Icons.arrow_forward_ios, size: 18),
+                        // Nonaktifkan jika ini soal terakhir
+                        onPressed: !isLastQuestion ? _nextQuestion : null,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
 
-            const Spacer(), // Dorong tombol ke bawah
+              // 2. Teks Pertanyaan
+              Text(
+                currentQuestion.text,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(
+                  fontWeight: FontWeight.w600, // SemiBold
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 32),
 
-            // 3. Tombol Next / Submit
-            ElevatedButton(
-              onPressed: _selectedOptionIndex != null ? _nextQuestion : null,
-              child: Text(isLastQuestion ? 'Submit' : 'Next'),
-            ),
-          ],
+              // 3. Daftar Pilihan
+              ...List.generate(currentQuestion.options.length, (index) {
+                return OptionTile(
+                  optionText: currentQuestion.options[index],
+                  isSelected: selectedOptionIndex == index,
+                  onTap: () => _selectOption(index),
+                );
+              }),
+
+              const Spacer(),
+              // Mendorong tombol ke bawah
+
+              // 4. TOMBOL SUBMIT (HANYA MUNCUL DI SOAL TERAKHIR)
+              // Logika ini akan menampilkan tombol Submit jika di soal terakhir,
+              // dan widget kosong jika tidak.
+              if (isLastQuestion)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: isOptionSelected ? _submitQuiz : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      disabledBackgroundColor: Colors.grey.shade300,
+                    ),
+                    child: const Text(
+                      'Submit Quiz',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600, // SemiBold
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

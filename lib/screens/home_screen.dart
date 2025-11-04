@@ -15,7 +15,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Listener untuk mengecek apakah text field kosong atau tidak
     _nameController.addListener(() {
       setState(() {
         _isButtonEnabled = _nameController.text.trim().isNotEmpty;
@@ -31,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startQuiz() {
     if (_isButtonEnabled) {
-      // Kirim nama pengguna sebagai 'argument' ke halaman kuis
       Navigator.pushNamed(
         context,
         AppRoutes.quiz,
@@ -43,32 +41,79 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Selamat Datang'),
-      ),
+      resizeToAvoidBottomInset: false, // button gak ikut :)
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start, // Align ke kiri
           children: [
+            const SizedBox(height: 80), // Jarak dari atas
+
             Text(
-              'Aplikasi Kuis Sederhana',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Masukkan Nama Anda',
-                border: OutlineInputBorder(),
+              'Welcome to Quizzer',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              // Tombol 'disabled' jika nama kosong
-              onPressed: _isButtonEnabled ? _startQuiz : null,
-              child: const Text('Mulai Kuis'),
+            const SizedBox(height: 12),
+            Text(
+              'Please Enter your name below to get started',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w400,
+                color: Colors.black54,
+              ),
             ),
+            const SizedBox(height: 40), // Jarak ke input field
+
+            Text(
+              'Your name',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                hintText: 'Enter your name', // Placeholder
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide.none, // Hapus garis border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Warna background input field
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+            ),
+            const Spacer(), // Mendorong tombol ke bagian bawah
+
+            SizedBox(
+              width: double.infinity, // Membuat tombol full width
+              child: ElevatedButton(
+                onPressed: _isButtonEnabled ? _startQuiz : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[600], // Warna biru untuk tombol
+                  foregroundColor: Colors.white, // Warna teks tombol
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                  ),
+                  disabledBackgroundColor: Colors.blue.withValues(alpha: 0.3), // Warna tombol disabled
+                  disabledForegroundColor: Colors.white.withValues(alpha: 0.7), // Warna teks tombol disabled
+                ),
+                child: const Text(
+                  'Start Quiz',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 36), // Padding bawah untuk tombol
           ],
         ),
       ),
