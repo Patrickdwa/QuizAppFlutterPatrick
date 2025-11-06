@@ -25,31 +25,52 @@ Aplikasi kuis sederhana yang dibuat dengan Flutter.
 ## Screenshot Aplikasi
 
 ### 1. Home Screen (Input Nama)
+<img src="docs/home(light).jpg" alt="Home Screen" height="450">
 <img src="docs/home(dark).jpg" alt="Home Screen" height="450">
 
 ### 2. Quiz Screen
+<img src="docs/quiz(light).jpg" alt="Quiz Screen" height="450">
 <img src="docs/quiz(dark).jpg" alt="Quiz Screen" height="450">
 
 ### 3. Result Screen (dengan Animasi)
+<img src="docs/result(light).jpg" alt="Result Screen" height="450">
 <img src="docs/result(dark).jpg" alt="Result Screen" height="450">
 
 
 ### Video Demo
-
-<p align="center">
-    <img src="docs/demo.gif" alt="Video Demo Aplikasi" width="300">
-</p>
-<p align="center">
-  <i>(Pratinjau di atas adalah file GIF. Ganti dengan demo Anda)</i>
-</p>
+[**Lihat Video Demo Lengkap (MP4)**](docs/demo.mp4)
 
 ## Link Mockup/Prototype
 
-- **Aplikasi Web:** [Link ke demo web Anda (jika ada)]
+- **Aplikasi Web:** [Prototype Quizzer] (https://www.figma.com/proto/eNomXgDzH5GLPrQ7Zr9Rt4/Quizzer?node-id=0-1&t=La5dALbc0swb8pZn-1)]
 
 ## Credit Aset
-
+* **Figma:** [Figma](https://www.figma.com/design/eNomXgDzH5GLPrQ7Zr9Rt4/Quizzer?node-id=0-1&m=dev&t=La5dALbc0swb8pZn-1)
 * **Font:** [Inter](https://fonts.google.com/specimen/Inter)
 * Seluruh aset lain (ikon, dll.) adalah bagian dari Flutter SDK.
 
 ## Struktur Proyek
+
+```
+lib/
+│
+├── data/
+│   └── questions.dart         # List-list pertanyaan 
+│
+├── models/
+│   └── quiz_model.dart        # Getter dan setter untuk pertanyaan
+│
+├── screens/
+│   ├── home_screen.dart       # Halaman Screen awal
+│   ├── quiz_screen.dart       # Halaman Kuis
+│   ├── result_screen.dart     # Halaman Hasil
+│   └── splash_screen.dart     # Splash Screen gimmick
+│
+├── widgets/
+│   └── option_tile.dart       # Widget untuk pilihan jawaban
+│
+├── app.dart                   # Setting Utama Aplikasi
+├── main.dart                  # File menjalankan  Aplikasi
+├── routes.dart                # Routing Halaman Aplikasi
+└── theme.dart                 # Theme (warna) aplikasi untuk light dan dark
+```
