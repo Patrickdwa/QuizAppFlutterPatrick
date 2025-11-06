@@ -42,7 +42,7 @@ class ResultScreen extends StatelessWidget {
             Text(
               '$score/$total',
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
                 color: Colors.black87,
               ),
             ),
@@ -50,7 +50,7 @@ class ResultScreen extends StatelessWidget {
               'Score',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Colors.black54,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ],
@@ -67,7 +67,7 @@ class ResultScreen extends StatelessWidget {
         icon: const Icon(Icons.refresh, color: Colors.white), // Ikon
         label: const Text(
           'Retry Quiz',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         onPressed: () {
           // Ulangi kuis dengan nama yang sama
@@ -99,7 +99,7 @@ class ResultScreen extends StatelessWidget {
           'Back to home',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             color: Colors.blue[600], // Warna teks
           ),
         ),
@@ -145,7 +145,7 @@ class ResultScreen extends StatelessWidget {
             Text(
               'Congratulation',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
             ),

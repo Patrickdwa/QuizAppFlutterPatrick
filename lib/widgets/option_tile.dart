@@ -30,7 +30,7 @@ class OptionTile extends StatelessWidget {
           style: TextStyle(
             color: isSelected ? Colors.white : Colors.black87, // Logika warna teks
             fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ),
