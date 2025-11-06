@@ -95,14 +95,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ElevatedButton(
                 onPressed: _isButtonEnabled ? _startQuiz : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary, // Warna biru untuk tombol
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary, // Warna teks tombol
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0), // Rounded corners
                   ),
-                  // disabledBackgroundColor: Colors.blue.withValues(alpha: 0.3), // Warna tombol disabled
-                  // disabledForegroundColor: Colors.white.withValues(alpha: 0.7), // Warna teks tombol disabled
                 ),
                 child: const Text(
                   'Start Quiz',

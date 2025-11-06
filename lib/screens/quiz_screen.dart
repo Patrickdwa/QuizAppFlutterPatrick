@@ -4,8 +4,6 @@ import 'package:quiz_app_patrick/models/quiz_model.dart';
 import 'package:quiz_app_patrick/routes.dart';
 import 'package:quiz_app_patrick/screens/result_screen.dart';
 import 'package:quiz_app_patrick/widgets/option_tile.dart';
-import 'package:quiz_app_patrick/data/questions.dart';
-import 'package:quiz_app_patrick/models/quiz_model.dart';
 
 // Class ini akan menyimpan data kuis yang sudah diacak
 class _QuizData {
@@ -42,25 +40,21 @@ class QuizScreen extends StatefulWidget {
 class _QuizScreenState extends State<QuizScreen> {
   late String userName;
   int _currentQuestionIndex = 0;
-  final Map<int, int> _userAnswers = {}; // <indexSoal, indexJawabanUser>
-  // Kita tidak lagi menggunakan 'dummyQuestions' secara langsung.
-  // 'quizItems' akan menampung daftar soal DAN opsi yang sudah diacak.
+  final Map<int, int> _userAnswers = {};
+  // langsung dari quizrandomizer bukan lagi dari dummy nya
   late List<_QuizData> quizItems;
 
   @override
   void initState() {
     super.initState();
-    // --- (PERUBAHAN 3) Logika Inisialisasi Baru ---
-    // A. Buat list baru dari 'dummyQuestions' dan acak urutan SOAL-nya
+    // Buat list baru dari 'dummyQuestions' dan acak urutan SOAL-nya
     final tempShuffledQuestions = List<Question>.from(dummyQuestions);
     tempShuffledQuestions.shuffle();
 
-    // B. Ubah setiap 'Question' yang sudah diacak menjadi '_QuizData'
-    //    (Konstruktor '_QuizData' akan otomatis mengacak OPSINYA)
+    // Ubah setiap 'Question' yang sudah diacak menjadi '_QuizData'
     quizItems = tempShuffledQuestions
         .map((question) => _QuizData(question))
         .toList();
-    // --- Akhir Perubahan 3 ---
   }
 
   @override
@@ -80,9 +74,7 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   void _nextQuestion() {
-    // --- (PERUBAHAN 4) Gunakan quizItems.length ---
     if (_currentQuestionIndex < quizItems.length - 1) {
-      // --- Akhir Perubahan 4 ---
       setState(() {
         _currentQuestionIndex++;
       });
@@ -91,7 +83,6 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
-  // Fungsi baru untuk 'Previous Question'
   void _prevQuestion() {
     if (_currentQuestionIndex > 0) {
       setState(() {
@@ -103,7 +94,6 @@ class _QuizScreenState extends State<QuizScreen> {
   void _submitQuiz() {
     int score = 0;
 
-    // --- (PERUBAHAN 5) Logika Pengecekan Skor Baru ---
     _userAnswers.forEach((questionIndex, answerIndex) {
       // Bandingkan jawaban user dengan 'newCorrectIndex' yang sudah diacak
       if (quizItems[questionIndex].newCorrectIndex == answerIndex) {
@@ -117,19 +107,16 @@ class _QuizScreenState extends State<QuizScreen> {
       arguments: ResultScreenArgs(
         name: userName,
         score: score,
-        // --- (PERUBAHAN 6) Gunakan quizItems.length ---
         totalQuestions: quizItems.length,
-        // --- Akhir Perubahan 6 ---
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // --- (PERUBAHAN 7) Ambil data dari 'quizItems' ---
+    // Ambil data dari 'quizItems' ---
     _QuizData currentQuizItem = quizItems[_currentQuestionIndex];
     bool isLastQuestion = _currentQuestionIndex == quizItems.length - 1;
-    // --- Akhir Perubahan 7 ---
     int? selectedOptionIndex = _userAnswers[_currentQuestionIndex];
     bool isOptionSelected = selectedOptionIndex != null;
 
@@ -140,22 +127,20 @@ class _QuizScreenState extends State<QuizScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. BARIS INDIKATOR PROGRESS & TOMBOL NAVIGASI (PERUBAHAN DI SINI)
+              // 1. BARIS INDIKATOR PROGRESS & TOMBOL NAVIGASI
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Indikator Progress
                   Text(
-                    // --- (PERUBAHAN 8) Gunakan quizItems.length ---
                     'Question: ${_currentQuestionIndex + 1}/${quizItems.length}',
-                    // --- Akhir Perubahan 8 ---
                     style: Theme
                         .of(context)
                         .textTheme
                         .titleMedium
                         ?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600, // SemiBold
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
 
@@ -185,37 +170,28 @@ class _QuizScreenState extends State<QuizScreen> {
 
               // 2. Teks Pertanyaan
               Text(
-                // --- (PERUBAHAN 9) Gunakan currentQuizItem ---
                 currentQuizItem.questionText,
-                // --- Akhir Perubahan 9 ---
                 style: Theme
                     .of(context)
                     .textTheme
                     .headlineSmall
                     ?.copyWith(
-                  fontWeight: FontWeight.w600, // SemiBold
+                  fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 32),
 
               // 3. Daftar Pilihan
-              // --- (PERUBAHAN 10) Gunakan currentQuizItem ---
               ...List.generate(currentQuizItem.shuffledOptions.length, (index) {
                 return OptionTile(
                   optionText: currentQuizItem.shuffledOptions[index],
-                  // --- Akhir Perubahan 10 ---
                   isSelected: selectedOptionIndex == index,
                   onTap: () => _selectOption(index),
                 );
               }),
 
               const Spacer(),
-              // Mendorong tombol ke bawah
-
-              // 4. TOMBOL SUBMIT (HANYA MUNCUL DI SOAL TERAKHIR)
-              // Logika ini akan menampilkan tombol Submit jika di soal terakhir,
-              // dan widget kosong jika tidak.
               if (isLastQuestion)
                 SizedBox(
                   width: double.infinity,
@@ -228,13 +204,12 @@ class _QuizScreenState extends State<QuizScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      // disabledBackgroundColor: Colors.grey.shade300,
                     ),
                     child: const Text(
                       'Submit Quiz',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.w600, // SemiBold
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
