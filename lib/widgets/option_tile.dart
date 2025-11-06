@@ -14,21 +14,21 @@ class OptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Gunakan GestureDetector untuk menangani onTap pada seluruh area
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: double.infinity, // Lebar penuh
+        width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-        margin: const EdgeInsets.only(bottom: 12.0), // Jarak antar opsi
+        margin: const EdgeInsets.only(bottom: 12.0),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.grey[200], // Logika warna
-          borderRadius: BorderRadius.circular(12.0), // Sudut membulat
+          color: isSelected ? cs.primary : cs.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12.0),
         ),
         child: Text(
           optionText,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black87, // Logika warna teks
+            color: isSelected ? cs.onPrimary : cs.onSurface,
             fontSize: 18,
             fontWeight: FontWeight.w400,
           ),

@@ -101,7 +101,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         .textTheme
                         .titleMedium
                         ?.copyWith(
-                      color: Colors.blue,
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w600, // SemiBold
                     ),
                   ),
@@ -139,7 +139,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     .headlineSmall
                     ?.copyWith(
                   fontWeight: FontWeight.w600, // SemiBold
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 32),
@@ -165,13 +165,13 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: ElevatedButton(
                     onPressed: isOptionSelected ? _submitQuiz : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      disabledBackgroundColor: Colors.grey.shade300,
+                      // disabledBackgroundColor: Colors.grey.shade300,
                     ),
                     child: const Text(
                       'Submit Quiz',

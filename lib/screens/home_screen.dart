@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
               'Welcome to Quizzer',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 12),
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
               'Please Enter your name below to get started',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w400,
-                color: Colors.black54,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 40), // Jarak ke input field
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
               'Your name',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -83,10 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderSide: BorderSide.none, // Hapus garis border
                 ),
                 filled: true,
-                fillColor: Colors.grey[200], // Warna background input field
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest, // Warna background input field
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
               ),
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Theme.of(context).colorScheme.onSurface),
             ),
             const Spacer(), // Mendorong tombol ke bagian bawah
 
@@ -95,14 +95,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ElevatedButton(
                 onPressed: _isButtonEnabled ? _startQuiz : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[600], // Warna biru untuk tombol
-                  foregroundColor: Colors.white, // Warna teks tombol
+                  backgroundColor: Theme.of(context).colorScheme.primary, // Warna biru untuk tombol
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary, // Warna teks tombol
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0), // Rounded corners
                   ),
-                  disabledBackgroundColor: Colors.blue.withValues(alpha: 0.3), // Warna tombol disabled
-                  disabledForegroundColor: Colors.white.withValues(alpha: 0.7), // Warna teks tombol disabled
+                  // disabledBackgroundColor: Colors.blue.withValues(alpha: 0.3), // Warna tombol disabled
+                  // disabledForegroundColor: Colors.white.withValues(alpha: 0.7), // Warna teks tombol disabled
                 ),
                 child: const Text(
                   'Start Quiz',

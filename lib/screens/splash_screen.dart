@@ -1,6 +1,6 @@
-import 'dart:async'; // Diperlukan untuk Timer
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:quiz_app_patrick/routes.dart/';
+import 'package:quiz_app_patrick/routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,7 +10,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -20,8 +19,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void _navigateToHome() {
     Timer(const Duration(seconds: 3), () {
       if (mounted) {
-        /* pushReplacementNamed agar pengguna tidak bisa menekan tombol 'back'
-        dan kembali ke splash screen.*/
         Navigator.pushReplacementNamed(context, AppRoutes.home);
       }
     });
@@ -29,22 +26,23 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness; // deteksi mode terang/gelap
+    final isDarkMode = brightness == Brightness.dark;
+
+    final imagePath = isDarkMode
+        ? 'assets/images/icons/App Icon - DM.png' // jika dark mode
+        : 'assets/images/icons/App Icon - LM.png'; // jika light mode
+
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
-      // backgroundColor: Colors.blueAccent,
+      backgroundColor: cs.surface,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/images/icons/App Icon - LM.png',
-              width: 180,
-              // height: 180,
-            ),
+            Image.asset(imagePath, width: 180),
             const SizedBox(height: 24),
-            // Indikator loading
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // Ubah warna agar kontras
-            ),
           ],
         ),
       ),
