@@ -4,6 +4,33 @@ import 'package:quiz_app_patrick/models/quiz_model.dart';
 import 'package:quiz_app_patrick/routes.dart';
 import 'package:quiz_app_patrick/screens/result_screen.dart';
 import 'package:quiz_app_patrick/widgets/option_tile.dart';
+import 'package:quiz_app_patrick/data/questions.dart';
+import 'package:quiz_app_patrick/models/quiz_model.dart';
+
+// Class ini akan menyimpan data kuis yang sudah diacak
+class _QuizData {
+  final String questionText;
+  late final List<String> shuffledOptions;
+  late final int newCorrectIndex;
+
+  // Konstruktor ini akan langsung mengacak opsi
+  _QuizData(Question originalQuestion)
+      : questionText = originalQuestion.text {
+
+    // Ambil jawaban yang benar (string-nya) SEBELUM diacak
+    final String correctAnswer = originalQuestion.options[originalQuestion.correctAnswerIndex];
+
+    // Buat list baru dari opsi dan acak (shuffle)
+    final shuffledList = List<String>.from(originalQuestion.options);
+    shuffledList.shuffle();
+
+    // Simpan list yang sudah diacak
+    shuffledOptions = shuffledList;
+
+    // Cari di mana posisi jawaban yang benar SEKARANG
+    newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+  }
+}
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -16,6 +43,25 @@ class _QuizScreenState extends State<QuizScreen> {
   late String userName;
   int _currentQuestionIndex = 0;
   final Map<int, int> _userAnswers = {}; // <indexSoal, indexJawabanUser>
+  // Kita tidak lagi menggunakan 'dummyQuestions' secara langsung.
+  // 'quizItems' akan menampung daftar soal DAN opsi yang sudah diacak.
+  late List<_QuizData> quizItems;
+
+  @override
+  void initState() {
+    super.initState();
+    // --- (PERUBAHAN 3) Logika Inisialisasi Baru ---
+    // A. Buat list baru dari 'dummyQuestions' dan acak urutan SOAL-nya
+    final tempShuffledQuestions = List<Question>.from(dummyQuestions);
+    tempShuffledQuestions.shuffle();
+
+    // B. Ubah setiap 'Question' yang sudah diacak menjadi '_QuizData'
+    //    (Konstruktor '_QuizData' akan otomatis mengacak OPSINYA)
+    quizItems = tempShuffledQuestions
+        .map((question) => _QuizData(question))
+        .toList();
+    // --- Akhir Perubahan 3 ---
+  }
 
   @override
   void didChangeDependencies() {
@@ -34,13 +80,13 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   void _nextQuestion() {
-    // Pindah ke pertanyaan berikutnya
-    if (_currentQuestionIndex < dummyQuestions.length - 1) {
+    // --- (PERUBAHAN 4) Gunakan quizItems.length ---
+    if (_currentQuestionIndex < quizItems.length - 1) {
+      // --- Akhir Perubahan 4 ---
       setState(() {
         _currentQuestionIndex++;
       });
     } else {
-      // Kuis selesai, hitung skor dan navigasi ke hasil
       _submitQuiz();
     }
   }
@@ -56,8 +102,11 @@ class _QuizScreenState extends State<QuizScreen> {
 
   void _submitQuiz() {
     int score = 0;
+
+    // --- (PERUBAHAN 5) Logika Pengecekan Skor Baru ---
     _userAnswers.forEach((questionIndex, answerIndex) {
-      if (dummyQuestions[questionIndex].correctAnswerIndex == answerIndex) {
+      // Bandingkan jawaban user dengan 'newCorrectIndex' yang sudah diacak
+      if (quizItems[questionIndex].newCorrectIndex == answerIndex) {
         score++;
       }
     });
@@ -68,16 +117,19 @@ class _QuizScreenState extends State<QuizScreen> {
       arguments: ResultScreenArgs(
         name: userName,
         score: score,
-        totalQuestions: dummyQuestions.length,
+        // --- (PERUBAHAN 6) Gunakan quizItems.length ---
+        totalQuestions: quizItems.length,
+        // --- Akhir Perubahan 6 ---
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    Question currentQuestion = dummyQuestions[_currentQuestionIndex];
-    bool isLastQuestion = _currentQuestionIndex == dummyQuestions.length - 1;
-
+    // --- (PERUBAHAN 7) Ambil data dari 'quizItems' ---
+    _QuizData currentQuizItem = quizItems[_currentQuestionIndex];
+    bool isLastQuestion = _currentQuestionIndex == quizItems.length - 1;
+    // --- Akhir Perubahan 7 ---
     int? selectedOptionIndex = _userAnswers[_currentQuestionIndex];
     bool isOptionSelected = selectedOptionIndex != null;
 
@@ -94,8 +146,9 @@ class _QuizScreenState extends State<QuizScreen> {
                 children: [
                   // Indikator Progress
                   Text(
-                    'Question: ${_currentQuestionIndex + 1}/${dummyQuestions
-                        .length}',
+                    // --- (PERUBAHAN 8) Gunakan quizItems.length ---
+                    'Question: ${_currentQuestionIndex + 1}/${quizItems.length}',
+                    // --- Akhir Perubahan 8 ---
                     style: Theme
                         .of(context)
                         .textTheme
@@ -132,7 +185,9 @@ class _QuizScreenState extends State<QuizScreen> {
 
               // 2. Teks Pertanyaan
               Text(
-                currentQuestion.text,
+                // --- (PERUBAHAN 9) Gunakan currentQuizItem ---
+                currentQuizItem.questionText,
+                // --- Akhir Perubahan 9 ---
                 style: Theme
                     .of(context)
                     .textTheme
@@ -145,9 +200,11 @@ class _QuizScreenState extends State<QuizScreen> {
               const SizedBox(height: 32),
 
               // 3. Daftar Pilihan
-              ...List.generate(currentQuestion.options.length, (index) {
+              // --- (PERUBAHAN 10) Gunakan currentQuizItem ---
+              ...List.generate(currentQuizItem.shuffledOptions.length, (index) {
                 return OptionTile(
-                  optionText: currentQuestion.options[index],
+                  optionText: currentQuizItem.shuffledOptions[index],
+                  // --- Akhir Perubahan 10 ---
                   isSelected: selectedOptionIndex == index,
                   onTap: () => _selectOption(index),
                 );
